@@ -1,10 +1,18 @@
 const express = require('express');
+var fs = require('fs');
 const app = express();
 const cors = require('cors');
-const http = require('http').createServer(app);
+var httpsOptions = {
+  key: fs.readFileSync('./key2.pem'),
+  cert: fs.readFileSync('./cert2.pem'),
+  requestCert: false,
+  rejectUnauthorized: false,
+};
+const http = require('https').createServer(httpsOptions, app);
+
 const io = require('socket.io')(http, {
   cors: true,
-  origins: ['http://localhost:3000'],
+  origins: ['https://192.168.1.5:3000'],
 });
 
 let test = 'lol';
@@ -14,6 +22,9 @@ io.of('/messaging').on('connect', (socket) => {
     let room = data.room;
     socket.join(room);
     console.log(room);
+    io.of('/messaging')
+      .to(room)
+      .emit('user-connected', { userId: data.userId });
     socket.on('sendMessage', (data) => {
       const { message, senderId } = data;
       console.log(message);
