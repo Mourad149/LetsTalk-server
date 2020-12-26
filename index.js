@@ -1,10 +1,11 @@
 const express = require('express');
 var fs = require('fs');
 const app = express();
+const dotenv = require('dotenv');
 const cors = require('cors');
 var httpsOptions = {
-  key: fs.readFileSync('./key2.pem'),
-  cert: fs.readFileSync('./cert2.pem'),
+  key: fs.readFileSync('./key2.pem', 'utf8'),
+  cert: fs.readFileSync('./cert2.pem', 'utf8'),
   requestCert: false,
   rejectUnauthorized: false,
 };
@@ -12,7 +13,7 @@ const http = require('https').createServer(httpsOptions, app);
 
 const io = require('socket.io')(http, {
   cors: true,
-  origins: ['https://192.168.1.5:3000'],
+  origins: [`https://${process.env.BASE_URL}:3000`],
 });
 
 let test = 'lol';
@@ -24,7 +25,7 @@ io.of('/messaging').on('connect', (socket) => {
     console.log(room);
     io.of('/messaging')
       .to(room)
-      .emit('user-connected', { userId: data.userId });
+      .emit('user-connected', { newUserId: data.userId });
     socket.on('sendMessage', (data) => {
       const { message, senderId } = data;
       console.log(message);
