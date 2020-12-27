@@ -88,7 +88,8 @@ app.use((err, req, res, next) => {
 
 mongoose
   .connect(
-    "mongodb+srv://zakaria:zakaria@cluster0.0al6x.mongodb.net/letsTalk?retryWrites=true&w=majority"
+    "mongodb+srv://zakaria:zakaria@cluster0.0al6x.mongodb.net/letsTalk?retryWrites=true&w=majority",
+    { useNewUrlParser: true }
   )
   .then((res) => app.listen(5000))
   .catch((err) => console.log("[ERROR MONGO]", err));
