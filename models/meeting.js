@@ -19,7 +19,11 @@ const meetingSchema = new Schema(
       type: Number,
       required: true,
     },
-    startTimeStamps: {
+    startDate: {
+      type: String,
+      required: true,
+    },
+    startTime: {
       type: String,
       required: true,
     },

@@ -25,14 +25,16 @@ exports.createMeeting = (req, res, next) => {
   const description = req.body.description;
   const hostId = req.body.hostId;
   const participants = req.body.participants;
-  const startTimeStamps = req.body.startTimeStamps;
+  const startTime = req.body.startTime;
+  const startDate = req.body.startDate;
 
   const meeting = new Meeting({
     theme: theme,
     description: description,
     hostId: hostId,
     participants: participants,
-    startTimeStamps: startTimeStamps,
+    startTime: startTime,
+    startDate: startDate,
   });
   meeting
     .save()
