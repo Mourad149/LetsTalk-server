@@ -1,19 +1,24 @@
-const Meeting = require("../models/meeting");
+const Meeting = require('../models/meeting');
 
 exports.getAllMeetings = (req, res, next) => {
+  console.log(req.params.skip);
   Meeting.find()
+    .sort({ _id: -1 })
+    .skip(parseInt(req.params.skip))
+    .limit(5)
     .then((meetings) => {
+      console.log(meetings);
       if (meetings) {
         res.status(200).json({
-          message: "SUCCESS",
+          message: 'SUCCESS',
           meetings: meetings,
         });
       }
 
-      const error = new Error("Could not find meetings.");
-      error.statusCode = 404;
+      // const error = new Error('Could not find meetings.');
+      // error.statusCode = 404;
 
-      throw error;
+      // throw error;
     })
     .catch((err) => {
       next(err);
@@ -40,7 +45,7 @@ exports.createMeeting = (req, res, next) => {
     .save()
     .then((meeting) => {
       res.status(201).json({
-        message: "SUCCESS",
+        message: 'SUCCESS',
         data: meeting,
       });
     })
