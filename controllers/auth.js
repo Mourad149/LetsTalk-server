@@ -1,7 +1,7 @@
-const Coach = require("../models/coach");
-const Participant = require("../models/participant");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+const Coach = require('../models/coach');
+const Participant = require('../models/participant');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 exports.signUp = (req, res, next) => {
   const firstName = req.body.firstName;
@@ -16,7 +16,8 @@ exports.signUp = (req, res, next) => {
   bcrypt
     .hash(password, 12)
     .then((hashedPw) => {
-      if (userType === "coach") {
+      console.log(req.body);
+      if (userType === 'coach') {
         const coach = new Coach({
           firstName: firstName,
           lastName: lastName,
@@ -25,9 +26,10 @@ exports.signUp = (req, res, next) => {
           currentPosition: currentPosition,
           mail: mail,
           password: hashedPw,
+          userType: userType,
         });
         return coach.save();
-      } else if (userType === "participant") {
+      } else if (userType === 'participant') {
         const participant = new Participant({
           firstName: firstName,
           lastName: lastName,
@@ -36,12 +38,13 @@ exports.signUp = (req, res, next) => {
           currentPosition: currentPosition,
           mail: mail,
           password: hashedPw,
+          userType: userType,
         });
         return participant.save();
       }
     })
     .then((result) => {
-      res.status(201).json({ message: "SUCCESS", userId: result._id });
+      res.status(201).json({ message: 'SUCCESS', result });
     })
     .catch((err) => {
       if (!err.statusCode) {
@@ -61,7 +64,7 @@ exports.login = (req, res, next) => {
         Coach.findOne({ mail: mail }).then((coach) => {
           if (!coach) {
             const error = new Error(
-              "A user with this email could not be found."
+              'A user with this email could not be found.'
             );
             error.statusCode = 401;
             throw error;
@@ -75,7 +78,7 @@ exports.login = (req, res, next) => {
     })
     .then((isEqual) => {
       if (!isEqual) {
-        const error = new Error("Wrong password!");
+        const error = new Error('Wrong password!');
         error.statusCode = 401;
         throw error;
       }
@@ -84,14 +87,14 @@ exports.login = (req, res, next) => {
           mail: loadedUser.mail,
           userId: loadedUser._id.toString(),
         },
-        "somesupersecretsecret",
-        { expiresIn: "1h" }
+        'somesupersecretsecret'
       );
-      res.status(200).json({ token: token, userId: loadedUser._id.toString() });
+      res.status(200).json({ token: token, currentUser: loadedUser });
     })
     .catch((err) => {
       if (!err.statusCode) {
-        err.statusCode = 500;
+        err.statusCode = 400;
+        res.status(err);
       }
       next(err);
     });

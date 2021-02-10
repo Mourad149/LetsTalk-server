@@ -9,16 +9,15 @@ exports.getAllMeetings = (req, res, next) => {
     .then((meetings) => {
       console.log(meetings);
       if (meetings) {
-        res.status(200).json({
+        return res.status(200).json({
           message: 'SUCCESS',
           meetings: meetings,
         });
       }
+      const error = new Error('Could not find meetings.');
+      error.statusCode = 404;
 
-      // const error = new Error('Could not find meetings.');
-      // error.statusCode = 404;
-
-      // throw error;
+      throw error;
     })
     .catch((err) => {
       next(err);

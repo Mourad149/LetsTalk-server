@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const participantSchema = new Schema(
@@ -34,10 +34,14 @@ const participantSchema = new Schema(
     status: {
       type: String,
       required: true,
-      default: "New",
+      default: 'New',
+    },
+    userType: {
+      type: String,
+      required: true,
     },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Participant", participantSchema);
+module.exports = mongoose.model('Participant', participantSchema);
