@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 
 const meetingRouter = require('./routes/meeting');
 const authRouter = require('./routes/auth');
+const isAuth = require('./middlewares/is-auth');
 
 var fs = require('fs');
 
@@ -44,8 +45,11 @@ app.use((req, res, next) => {
 });
 
 //  ---- Setting up middlewares
-app.use('/', meetingRouter);
-app.use('/', authRouter);
+app.get('/checkAuth', isAuth, (req, res, next) => {
+  res.end();
+});
+app.use(authRouter);
+app.use(meetingRouter);
 
 //  Error handling
 app.use((err, req, res, next) => {

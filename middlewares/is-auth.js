@@ -1,25 +1,25 @@
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
 
-module.exports = (req, res, next) => {
-  const authHeader = req.get("Authorization");
-  if (!authHeader) {
-    const error = new Error("Not authenticated.");
-    error.statusCode = 401;
-    throw error;
+dotenv.config();
+const secret = process.env.JWT_SECRET_KEY;
+const isAuth = function (req, res, next) {
+  const bearer = req.headers.authorization.split(' ');
+  const token = bearer[1];
+  if (!token) {
+    console.log('Unauthorized: No token provided');
+
+    return res.status(401).send('Unauthorized: No token provided');
+  } else {
+    jwt.verify(token, secret, function (err, decoded) {
+      if (err) {
+        console.log(err);
+        return res.status(401).send('Unauthorized: Invalid token');
+      } else {
+        console.log('checked');
+        next();
+      }
+    });
   }
-  const token = authHeader.split(" ")[1];
-  let decodedToken;
-  try {
-    decodedToken = jwt.verify(token, "somesupersecretsecret");
-  } catch (err) {
-    err.statusCode = 500;
-    throw err;
-  }
-  if (!decodedToken) {
-    const error = new Error("Not authenticated.");
-    error.statusCode = 401;
-    throw error;
-  }
-  req.userId = decodedToken.userId;
-  next();
 };
+module.exports = isAuth;

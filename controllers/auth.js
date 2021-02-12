@@ -2,6 +2,7 @@ const Coach = require('../models/coach');
 const Participant = require('../models/participant');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
 
 exports.signUp = (req, res, next) => {
   const firstName = req.body.firstName;
@@ -87,7 +88,7 @@ exports.login = (req, res, next) => {
           mail: loadedUser.mail,
           userId: loadedUser._id.toString(),
         },
-        'somesupersecretsecret'
+        process.env.JWT_SECRET_KEY
       );
       res.status(200).json({ token: token, currentUser: loadedUser });
     })
