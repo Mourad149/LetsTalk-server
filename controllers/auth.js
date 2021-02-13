@@ -13,6 +13,7 @@ exports.signUp = (req, res, next) => {
   const mail = req.body.mail;
   const password = req.body.password;
   const userType = req.body.userType;
+  const image = req.body.image;
 
   bcrypt
     .hash(password, 12)
@@ -28,6 +29,7 @@ exports.signUp = (req, res, next) => {
           mail: mail,
           password: hashedPw,
           userType: userType,
+          image: image,
         });
         return coach.save();
       } else if (userType === 'participant') {
@@ -40,6 +42,7 @@ exports.signUp = (req, res, next) => {
           mail: mail,
           password: hashedPw,
           userType: userType,
+          image: image,
         });
         return participant.save();
       }

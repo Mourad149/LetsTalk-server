@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const meetingSchema = new Schema(
@@ -27,8 +27,11 @@ const meetingSchema = new Schema(
       type: String,
       required: true,
     },
+    messages: {
+      type: Array,
+    },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Meeting", meetingSchema);
+module.exports = mongoose.model('Meeting', meetingSchema);

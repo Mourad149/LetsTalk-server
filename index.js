@@ -7,6 +7,8 @@ const bodyParser = require('body-parser');
 
 const meetingRouter = require('./routes/meeting');
 const authRouter = require('./routes/auth');
+const meetingController = require('./controllers/meeting');
+
 const isAuth = require('./middlewares/is-auth');
 
 var fs = require('fs');
@@ -71,9 +73,21 @@ io.of('/messaging').on('connect', (socket) => {
     console.log(room);
 
     socket.on('sendMessage', (data) => {
-      const { message, senderId } = data;
+      const { message, senderId, meetingId, userPdp, userRole } = data;
+      const object = {
+        message: {
+          text: message,
+          senderCred: {
+            image: userPdp,
+            userId: senderId,
+            userRole: userRole,
+          },
+        },
+        meetingId: meetingId,
+      };
       console.log(message);
-      io.of('/messaging').to(room).emit('sendToAll', { message, senderId });
+      meetingController.addMessage(object);
+      io.of('/messaging').to(room).emit('sendToAll', object.message);
     });
     socket.on('handRaised', (data) => {
       const { senderId } = data;

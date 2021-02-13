@@ -1,4 +1,5 @@
 const Meeting = require('../models/meeting');
+var ObjectID = require('mongodb').ObjectID;
 
 exports.getAllMeetings = (req, res, next) => {
   console.log(req.params.skip);
@@ -23,7 +24,29 @@ exports.getAllMeetings = (req, res, next) => {
       next(err);
     });
 };
+exports.addMessage = (object) => {
+  const { meetingId, message } = object;
 
+  console.log(object);
+  Meeting.updateOne(
+    { _id: ObjectID(meetingId) },
+    { $push: { messages: message } }
+  )
+    .then((res) => console.log('updated with success', res))
+    .catch((err) => console.log(err));
+};
+exports.getMessages = (req, res, next) => {
+  Meeting.find({ _id: ObjectID(req.params.meetingId) }, 'messages')
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
 exports.createMeeting = (req, res, next) => {
   const theme = req.body.theme;
   const description = req.body.description;
@@ -31,6 +54,7 @@ exports.createMeeting = (req, res, next) => {
   const participants = req.body.participants;
   const startTime = req.body.startTime;
   const startDate = req.body.startDate;
+  const messages = [];
 
   const meeting = new Meeting({
     theme: theme,
@@ -39,6 +63,7 @@ exports.createMeeting = (req, res, next) => {
     participants: participants,
     startTime: startTime,
     startDate: startDate,
+    messages: messages,
   });
   meeting
     .save()
