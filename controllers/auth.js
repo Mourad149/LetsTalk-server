@@ -65,22 +65,25 @@ exports.login = (req, res, next) => {
   Participant.findOne({ mail: mail })
     .then((participant) => {
       if (!participant) {
-        Coach.findOne({ mail: mail }).then((coach) => {
+        return Coach.findOne({ mail: mail }).then((coach) => {
           if (!coach) {
             const error = new Error(
               'A user with this email could not be found.'
             );
             error.statusCode = 401;
             throw error;
+          } else {
+            loadedUser = coach;
+            return bcrypt.compare(password, coach.password);
           }
-          loadedUser = coach;
-          return bcrypt.compare(password, coach.password);
         });
+      } else {
+        loadedUser = participant;
+        return bcrypt.compare(password, participant.password);
       }
-      loadedUser = participant;
-      return bcrypt.compare(password, participant.password);
     })
     .then((isEqual) => {
+      console.log(isEqual);
       if (!isEqual) {
         const error = new Error('Wrong password!');
         error.statusCode = 401;
