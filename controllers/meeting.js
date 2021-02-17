@@ -1,21 +1,19 @@
-const Meeting = require('../models/meeting');
-var ObjectID = require('mongodb').ObjectID;
+const Meeting = require("../models/meeting");
+var ObjectID = require("mongodb").ObjectID;
 
 exports.getAllMeetings = (req, res, next) => {
-  console.log(req.params.skip);
   Meeting.find()
     .sort({ _id: -1 })
     .skip(parseInt(req.params.skip))
     .limit(10)
     .then((meetings) => {
-      console.log(meetings);
       if (meetings) {
         return res.status(200).json({
-          message: 'SUCCESS',
+          message: "SUCCESS",
           meetings: meetings,
         });
       }
-      const error = new Error('Could not find meetings.');
+      const error = new Error("Could not find meetings.");
       error.statusCode = 404;
 
       throw error;
@@ -27,16 +25,15 @@ exports.getAllMeetings = (req, res, next) => {
 exports.addMessage = (object) => {
   const { meetingId, message } = object;
 
-  console.log(object);
   Meeting.updateOne(
     { _id: ObjectID(meetingId) },
     { $push: { messages: message } }
   )
-    .then((res) => console.log('updated with success', res))
+    .then((res) => console.log("updated with success", res))
     .catch((err) => console.log(err));
 };
 exports.getMessages = (req, res, next) => {
-  Meeting.find({ _id: ObjectID(req.params.meetingId) }, 'messages')
+  Meeting.find({ _id: ObjectID(req.params.meetingId) }, "messages")
     .then((result) => {
       res.status(200).json(result);
     })
@@ -69,7 +66,7 @@ exports.createMeeting = (req, res, next) => {
     .save()
     .then((meeting) => {
       res.status(201).json({
-        message: 'SUCCESS',
+        message: "SUCCESS",
         data: meeting,
       });
     })

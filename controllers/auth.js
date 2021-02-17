@@ -3,6 +3,7 @@ const Participant = require("../models/participant");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
+const { connectedUsers } = require("..");
 
 exports.signUp = (req, res, next) => {
   const firstName = req.body.firstName;
@@ -18,7 +19,6 @@ exports.signUp = (req, res, next) => {
   bcrypt
     .hash(password, 12)
     .then((hashedPw) => {
-      console.log(req.body);
       if (userType === "coach") {
         const coach = new Coach({
           firstName: firstName,
@@ -83,7 +83,6 @@ exports.login = (req, res, next) => {
       }
     })
     .then((isEqual) => {
-      console.log(isEqual);
       if (!isEqual) {
         const error = new Error("Wrong password!");
         error.statusCode = 401;
