@@ -73,7 +73,7 @@ io.of('/messaging').on('connect', (socket) => {
     console.log(room);
 
     socket.on('sendMessage', (data) => {
-      const { message, senderId, meetingId, userPdp, userRole } = data;
+      const { message, senderId, meetingId, userPdp, userRole,senderName } = data;
       const object = {
         message: {
           text: message,
@@ -81,6 +81,7 @@ io.of('/messaging').on('connect', (socket) => {
             image: userPdp,
             userId: senderId,
             userRole: userRole,
+            senderName:senderName
           },
         },
         meetingId: meetingId,

@@ -1,8 +1,8 @@
-const Coach = require('../models/coach');
-const Participant = require('../models/participant');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const dotenv = require('dotenv');
+const Coach = require("../models/coach");
+const Participant = require("../models/participant");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
 
 exports.signUp = (req, res, next) => {
   const firstName = req.body.firstName;
@@ -19,7 +19,7 @@ exports.signUp = (req, res, next) => {
     .hash(password, 12)
     .then((hashedPw) => {
       console.log(req.body);
-      if (userType === 'coach') {
+      if (userType === "coach") {
         const coach = new Coach({
           firstName: firstName,
           lastName: lastName,
@@ -32,7 +32,7 @@ exports.signUp = (req, res, next) => {
           image: image,
         });
         return coach.save();
-      } else if (userType === 'participant') {
+      } else if (userType === "participant") {
         const participant = new Participant({
           firstName: firstName,
           lastName: lastName,
@@ -48,7 +48,7 @@ exports.signUp = (req, res, next) => {
       }
     })
     .then((result) => {
-      res.status(201).json({ message: 'SUCCESS', result });
+      res.status(201).json({ message: "SUCCESS", result });
     })
     .catch((err) => {
       if (!err.statusCode) {
@@ -68,7 +68,7 @@ exports.login = (req, res, next) => {
         return Coach.findOne({ mail: mail }).then((coach) => {
           if (!coach) {
             const error = new Error(
-              'A user with this email could not be found.'
+              "A user with this email could not be found."
             );
             error.statusCode = 401;
             throw error;
@@ -85,7 +85,7 @@ exports.login = (req, res, next) => {
     .then((isEqual) => {
       console.log(isEqual);
       if (!isEqual) {
-        const error = new Error('Wrong password!');
+        const error = new Error("Wrong password!");
         error.statusCode = 401;
         throw error;
       }
@@ -102,6 +102,28 @@ exports.login = (req, res, next) => {
       if (!err.statusCode) {
         err.statusCode = 400;
         res.status(err);
+      }
+      next(err);
+    });
+};
+
+exports.getRegistredUsers = (req, res, next) => {
+  Participant.find({}, "_id firstName lastName image")
+    .then((participants) => {
+      if (participants) {
+        return res.status(200).json({
+          message: "SUCCESS",
+          participants: participants,
+        });
+      }
+      const error = new Error("Could not find participants.");
+      error.statusCode = 404;
+
+      throw error;
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
       }
       next(err);
     });

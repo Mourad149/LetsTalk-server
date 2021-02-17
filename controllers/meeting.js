@@ -6,7 +6,7 @@ exports.getAllMeetings = (req, res, next) => {
   Meeting.find()
     .sort({ _id: -1 })
     .skip(parseInt(req.params.skip))
-    .limit(5)
+    .limit(10)
     .then((meetings) => {
       console.log(meetings);
       if (meetings) {
